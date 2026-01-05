@@ -30,36 +30,30 @@ npm run json-to-schemas-development
 
 ### 2. 生成的 Schema 示例
 
-以下是生成的 `SchemaType.ts` 文件的示例：
+以下是生成的 `db_config.ts`,`SchemaType.ts` 文件的示例：
 
 ```typescript
-export interface GlobalDBConfig {
-  host: string;
-  port: number;
-  db: string;
-}
+import { z } from "zod";
 
-export interface ServerDBConfig {
-  [serverId: string]: {
-    host: string;
-    port: number;
-    db: string;
-  };
-}
+export const schema = z.object({
+  RegisterServerUrl: z.string(),
+  version: z.number(),
+  front_1: z.object({ zoneList: z.array(z.string()) }),
+  front_2: z.object({ zoneList: z.array(z.string()) }),
+  front_3: z.object({ zoneList: z.array(z.string()) }),
+  group: z.object({
+    1: z.object({ front: z.string(), logic: z.string() }),
+    2: z.object({ front: z.string(), logic: z.string() }),
+    3: z.object({ front: z.string(), logic: z.string() }),
+  }),
+});
+```
 
-export interface ZoneDBConfig {
-  [zoneId: string]: {
-    host: string;
-    port: number;
-    db: string;
-  };
-}
+```typescript
+import z from "zod";
+import { schema as zoneConfigSchema } from "../json_schemas/zone_config";
 
-export interface DBConfig {
-  db_global: GlobalDBConfig;
-  db_server: ServerDBConfig;
-  db_zones: ZoneDBConfig;
-}
+export type TzoneConfigSchema = z.infer<typeof zoneConfigSchema>;
 ```
 
 ### 3. 与现有组件的集成
@@ -67,10 +61,10 @@ export interface DBConfig {
 生成的 Schema 文件可以直接在 `MongoComponent` 和其他相关组件中使用，确保类型安全。例如：
 
 ```typescript
-import { DBConfig } from "../sysconfig/SchemaType";
+import { TzoneConfigSchema } from "../sysconfig/SchemaType";
 
-function loadConfig(): DBConfig {
-  const config: DBConfig = require("../sysconfig/development/db_config.json");
+function loadConfig(): TzoneConfigSchema {
+  const config: TzoneConfigSchema = require("../sysconfig/development/zone_config.json");
   return config;
 }
 ```
@@ -98,23 +92,29 @@ function loadConfig(): DBConfig {
 
 ```json
 {
-  "db_global": {
-    "host": "192.168.101.108",
-    "port": 27017,
-    "db": "global_db"
+  "RegisterServerUrl": "192.168.101.109:40005",
+  "version": 10,
+  "front_1": {
+    "zoneList": ["zone1"]
   },
-  "db_server": {
-    "front_1": {
-      "host": "192.168.101.108",
-      "port": 27017,
-      "db": "server_1"
-    }
+  "front_2": {
+    "zoneList": ["zone2"]
   },
-  "db_zones": {
-    "zone1": {
-      "host": "192.168.101.108",
-      "port": 27017,
-      "db": "zone_1"
+  "front_3": {
+    "zoneList": ["zone2"]
+  },
+  "group": {
+    "1": {
+      "front": "front_1",
+      "logic": "logic_1"
+    },
+    "2": {
+      "front": "front_2",
+      "logic": "logic_2"
+    },
+    "3": {
+      "front": "front_3",
+      "logic": "logic_3"
     }
   }
 }
@@ -133,7 +133,7 @@ npm run json-to-schemas-development
 在 `MongoComponent` 中加载配置并使用类型检查：
 
 ```typescript
-const config: DBConfig = loadConfig();
+const config: TzoneConfigSchema = loadConfig();
 console.log(config.db_global.host);
 ```
 
