@@ -10,4 +10,9 @@ export const schema = z.object({
     zone1: z.object({ host: z.string(), port: z.number(), db: z.string() }),
     zone2: z.object({ host: z.string(), port: z.number(), db: z.string() }),
   }),
+  redis_global: z.object({
+    host: z.string(),
+    port: z.number(),
+    db: z.number(),
+  }),
 });
