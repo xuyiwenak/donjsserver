@@ -14,7 +14,7 @@
         "group": "1",
         "port": 41001,
         "httpPort": 41000
-      },
+      }, 
       "node_args": "--inspect=41002",
       "cwd": "./dist"
     }

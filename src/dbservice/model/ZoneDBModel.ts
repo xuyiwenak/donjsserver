@@ -6,10 +6,10 @@
  * @LastEditors: lyh
  * @LastEditTime: 2025-01-03 11:56:32
  */
-import { Connection } from "mongoose";
+import { Connection, Model } from "mongoose";
 // import { Counter } from "../../entity/count.entity";
 // import { IMail } from "../../entity/mail.entity";
-// import { IPlayer } from "../../entity/player.entity";
+import { IPlayer, PlayerSchema} from "../../entity/player.entity";
 // import { IFriend } from "../../entity/player.friend.entity";
 // import { IPlayerGameInfoBase } from "../../entity/player.gameinfo.entity";
 // import { IHeroBag } from "../../entity/player.hero.bag.entity";
@@ -20,7 +20,7 @@ import { gameLogger } from "../../util/logger";
 export class ZoneModelManager {
   private connection: Connection;
   // private propBagModel!: Model<IPropBag>;
-  // private playerModel!: Model<IPlayer>;
+   private playerModel!: Model<IPlayer>;
   // private mailModel!: Model<IMail>;
   // private mailStatusModel!: Model<IMailStatus>;
   // private friendModel!: Model<IFriend>;
@@ -40,8 +40,8 @@ export class ZoneModelManager {
     // this.counterModel = this.connection.model<Counter>('Counter', CounterSchema);
     // this.counterModel.createIndexes();
     // this.propBagModel = this.connection.model<IPropBag>('PropBags', PropBagSchema);
-    // this.playerModel = this.connection.model<IPlayer>('Player', PlayerSchema);
-    // this.playerModel.createIndexes();
+     this.playerModel = this.connection.model<IPlayer>('Player', PlayerSchema);
+     this.playerModel.createIndexes();
     // // MailSchema.plugin(AutoIncrement, { inc_field: 'mailId', start_seq: 10000000000 });
     // this.mailModel = this.connection.model<IMail>('Mail', MailSchema);
     // this.mailModel.createIndexes();
@@ -113,4 +113,8 @@ export async function stopAllZoneConnection() {
   for (const key in zoneModelManagerMap) {
     await zoneModelManagerMap.get(key)?.stopConnection();
   }
+}
+/** 按区获取 Player Model，供业务层使用 */
+export function getPlayerModel(zone: string): Model<IPlayer> {
+  return getZoneModelManager(zone).getPlayerModel();
 }
