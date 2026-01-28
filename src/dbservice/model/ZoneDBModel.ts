@@ -62,9 +62,9 @@ export class ZoneModelManager {
   // public getPropBagModel(): Model<IPropBag> {
   //   return this.propBagModel;
   // }
-  // public getPlayerModel(): Model<IPlayer> {
-  //   return this.playerModel;
-  // }
+  public getPlayerModel(): Model<IPlayer> {
+     return this.playerModel;
+  }
   // public getMailModel(): Model<IMail> {
   //   return this.mailModel;
   // }
