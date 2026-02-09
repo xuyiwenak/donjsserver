@@ -11,7 +11,7 @@ import {
   EComName,
   IBaseComponent,
 } from "../common/BaseComponent";
-import { DBCfg, ZoneCfg as ServerCfg } from "../common/CommonType";
+import { DBCfg, RedisCfg, ZoneCfg as ServerCfg } from "../common/CommonType";
 import { ServerGlobals } from "../common/ServerGlobal";
 import { gameLogger as logger } from "../util/logger";
 // import { schema as DBConfig } from '../json_schemas/db_config';
@@ -21,6 +21,7 @@ export class SysCfgComponent implements IBaseComponent {
   private _db_global!: DBCfg;
   private _db_server_map: Map<string, DBCfg> = new Map();
   private _db_zone_map: Map<string, DBCfg> = new Map();
+  private _redis_global?: RedisCfg;
   private _server!: ServerCfg;
   init() {}
 
@@ -78,8 +79,17 @@ export class SysCfgComponent implements IBaseComponent {
         this._db_zone_map.set(zone, dbConfig as DBCfg);
       }
     }
+
+    if (config.redis_global) {
+      this._redis_global = config.redis_global as RedisCfg;
+    }
     logger.log("Configuration loaded DB successfully:", config);
   }
+
+  public get redis_global(): RedisCfg | undefined {
+    return this._redis_global;
+  }
+
   /**
    * 获取账号数据库的配置
    */

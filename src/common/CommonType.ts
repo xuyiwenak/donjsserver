@@ -18,8 +18,16 @@ export type ZoneCfg = {
 
 export type DBCfg = {
   host: string;
-  port: string;
+  port: number;
   db: string;
+  user?: string;
+  password?: string;
+};
+
+export type RedisCfg = {
+  host: string;
+  port: number;
+  db?: number;
   user?: string;
   password?: string;
 };
