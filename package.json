@@ -18,10 +18,15 @@
     "mocha": "^9.2.2",
     "sinon": "^21.0.1",
     "swagger-ui-express": "^5.0.1",
-    "tsrpc-cli": "^2.4.5"
+    "ts-node": "^10.9.2",
+    "tsrpc-cli": "^2.4.5",
+    "typescript": "^5.9.3"
   },
   "dependencies": {
+<<<<<<< HEAD
     "bull": "^4.16.5",
+=======
+>>>>>>> 6497acd (接入注册)
     "cron": "^3.1.7",
     "json-to-zod": "^1.1.2",
     "log4js": "^6.9.1",

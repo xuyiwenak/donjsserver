@@ -4,6 +4,7 @@ import { MsgUserNotice } from './MsgUserNotice';
 import { ReqCreateRole, ResCreateRole } from './PtlCreateRole';
 import { ReqEnterZone, ResEnterZone } from './PtlEnterZone';
 import { ReqLogin, ResLogin } from './PtlLogin';
+import { ReqRegister, ResRegister } from './PtlRegister';
 
 export interface ServiceType {
     api: {
@@ -18,6 +19,10 @@ export interface ServiceType {
         "Login": {
             req: ReqLogin,
             res: ResLogin
+    },
+        "Register": {
+            req: ReqRegister,
+            res: ResRegister
         }
     },
     msg: {
@@ -27,7 +32,7 @@ export interface ServiceType {
 }
 
 export const serviceProto: ServiceProto<ServiceType> = {
-    "version": 2,
+    "version": 3,
     "services": [
         {
             "id": 0,
@@ -52,6 +57,11 @@ export const serviceProto: ServiceProto<ServiceType> = {
         {
             "id": 4,
             "name": "Login",
+            "type": "api"
+        },
+        {
+            "id": 5,
+            "name": "Register",
             "type": "api"
         }
     ],
@@ -184,6 +194,37 @@ export const serviceProto: ServiceProto<ServiceType> = {
                     "name": "hasRole",
                     "type": {
                         "type": "Boolean"
+                    }
+                }
+            ]
+        },
+        "PtlRegister/ReqRegister": {
+            "type": "Interface",
+            "properties": [
+                {
+                    "id": 0,
+                    "name": "account",
+                    "type": {
+                        "type": "String"
+                    }
+                },
+                {
+                    "id": 1,
+                    "name": "password",
+                    "type": {
+                        "type": "String"
+                    }
+                }
+            ]
+        },
+        "PtlRegister/ResRegister": {
+            "type": "Interface",
+            "properties": [
+                {
+                    "id": 0,
+                    "name": "userId",
+                    "type": {
+                        "type": "String"
                     }
                 }
             ]

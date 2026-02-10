@@ -72,6 +72,14 @@ export class ComponentManager {
     return this.components.get(key) as InstanceType<(typeof EComNameType)[K]>;
   }
 
+  /**
+   * 按字符串 key 获取组件，用于非枚举注册的组件
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  getComponentByKey<T extends IBaseComponent = any>(key: string): T | undefined {
+    return this.components.get(key) as T | undefined;
+  }
+
   // 启动所有组件
   async startAll(): Promise<void> {
     //这个values的元素和插入的顺序一致

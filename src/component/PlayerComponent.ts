@@ -61,7 +61,6 @@ export class PlayerComponent implements IBaseComponent {
 
       const userId = uuidv4();
       const zoneId = this.defaultZone;
-
       const created = await Player.create({
         userId,
         account,
@@ -93,9 +92,9 @@ export class PlayerComponent implements IBaseComponent {
     }
   }
 
-  /**
+  /*
    * 登录：账号 + 密码校验
-   */
+   */ 
   async login(account: string, password: string): Promise<PlayerResult> {
     if (!this.defaultZone) {
       gameLogger.error(

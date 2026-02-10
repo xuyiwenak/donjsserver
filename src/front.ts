@@ -14,6 +14,8 @@ import { websocketGameServer } from "./common/WebsocketGameServer";
 
 import { GlobalVarComponent } from "./component/GlobalVarComponent";
 import { SysCfgComponent } from "./component/SysCfgComponent";
+import { MongoComponent } from "./component/front/MongoComponent";
+import { PlayerComponent } from "./component/PlayerComponent";
 
 import { gameLogger, gameLogger as logger } from "./util/logger";
 import { stopFrontServer } from "./util/tool";
@@ -48,6 +50,14 @@ async function main() {
   ComponentManager.instance.register(EComName.SysCfgComponent, sysCfgComp);
 
   /*-----------------------------com begin--------------------------------------*/
+
+  // 数据库相关组件：负责初始化 Mongo 连接和各区模型
+  const mongoComp: MongoComponent = new MongoComponent();
+  ComponentManager.instance.register("MongoComponent", mongoComp);
+
+  // 玩家组件：依赖 SysCfgComponent 和按区初始化后的 Player Model
+  const playerComp: PlayerComponent = new PlayerComponent();
+  ComponentManager.instance.register("PlayerComponent", playerComp);
 
   /*-----------------------------com end--------------------------------------*/
 
