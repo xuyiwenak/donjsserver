@@ -11,6 +11,7 @@
     "test": "mocha --require ts-node/register test/**/*.test.ts"
   },
   "devDependencies": {
+    "@types/bull": "^4.10.4",
     "@types/mocha": "^10.0.10",
     "@types/sinon": "^21.0.0",
     "copyfiles": "^2.4.1",
@@ -23,10 +24,7 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
-<<<<<<< HEAD
     "bull": "^4.16.5",
-=======
->>>>>>> 6497acd (接入注册)
     "cron": "^3.1.7",
     "json-to-zod": "^1.1.2",
     "log4js": "^6.9.1",

@@ -19,6 +19,7 @@ import { PlayerComponent } from "./component/PlayerComponent";
 
 import { gameLogger, gameLogger as logger } from "./util/logger";
 import { stopFrontServer } from "./util/tool";
+import { initHttpServer, startHttpServer } from "./httpServer";
 
 // Entry function
 async function main() {
@@ -64,6 +65,11 @@ async function main() {
   await ComponentManager.instance.startAll();
   await ComponentManager.instance.afterStartAll();
   //-------------------------组件相关end-----------------------------------------
+
+  // 启动 HTTP API Server（基于 ServiceType）
+  await initHttpServer(args);
+  await startHttpServer();
+
   swaggui();
   await websocketGameServer.init(args);
   await websocketGameServer.start();
