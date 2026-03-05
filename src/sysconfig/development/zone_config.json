@@ -1,5 +1,5 @@
 {
-    "RegisterServerUrl": "192.168.101.109:40005",
+    "RegisterServerUrl": "127.0.0.1:40005",
     "version": 10,
     "front_1": {
         "zoneList": [

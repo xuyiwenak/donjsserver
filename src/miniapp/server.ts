@@ -29,7 +29,7 @@ export function createMiniappApp(): express.Express {
   app.use("/login", loginRoutes);
   app.use("/home", homeRoutes);
   app.use("/api", apiRoutes);
-  app.use("/work", workRoutes);
+  app.use("/work", authMiddleware, workRoutes);
   app.use("/dataCenter", dataCenterRoutes);
   app.use("/message", authMiddleware, messageRoutes);
 

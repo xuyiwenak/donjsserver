@@ -50,7 +50,7 @@ router.post("/postPasswordLogin", async (req: Request, res: Response) => {
     return;
   }
 
-  const token = issueToken(ret.data.userId);
+  const token = await issueToken(ret.data.userId);
   // #region agent log
   debugLog({ sessionId: "0e70cb", runId: "login", hypothesisId: "D", location: "login.ts:postPasswordLogin:sendSucc", message: "sending success with token", data: { tokenLength: token?.length, userId: ret.data.userId } });
   // #endregion
@@ -65,7 +65,7 @@ router.get("/getSendMessage", (_req: Request, res: Response) => {
 // 验证码校验：简单实现为任意 6 位数字即通过（与发码逻辑对应，可后续接真实短信）
 const CODE_VERIFY_ACCEPT = "123456";
 
-router.get("/postCodeVerify", (req: Request, res: Response) => {
+router.get("/postCodeVerify", async (req: Request, res: Response) => {
   const code = (req.query?.code as string) ?? (req.body?.code as string) ?? "";
   if (!code) {
     sendErr(res, "Missing code", 400);
@@ -78,7 +78,7 @@ router.get("/postCodeVerify", (req: Request, res: Response) => {
   }
   // 验证码登录时无 userId，生成匿名 token；若发码时绑定了手机号可这里查用户再 issue
   const anonymousId = `phone_${code}_${Date.now()}`;
-  const token = issueToken(anonymousId);
+  const token = await issueToken(anonymousId);
   sendSucc(res, { token });
 });
 

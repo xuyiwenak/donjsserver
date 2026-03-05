@@ -1,12 +1,12 @@
-import { Router, Request, Response } from "express";
+import { Router, Response } from "express";
 import { v4 as uuidv4 } from "uuid";
 import { sendSucc, sendErr } from "../middleware/response";
-import { getUserIdByToken } from "../middleware/auth";
+import type { MiniappRequest } from "../middleware/auth";
 import { getWorkModel } from "../../dbservice/model/GlobalInfoDBModel";
 
 const router = Router();
 
-router.post("/publish", async (req: Request, res: Response) => {
+router.post("/publish", async (req: MiniappRequest, res: Response) => {
   const payload = (req.body?.data ?? req.body) as {
     desc?: string;
     tags?: string[];
@@ -30,15 +30,11 @@ router.post("/publish", async (req: Request, res: Response) => {
     return;
   }
 
-  // 可选：从 Authorization 头中解析 userId 作为 authorId
-  let authorId: string | null = null;
-  const auth = req.headers.authorization;
-  if (auth && auth.startsWith("Bearer ")) {
-    const token = auth.slice(7).trim();
-    const uid = getUserIdByToken(token);
-    if (uid) {
-      authorId = uid;
-    }
+  // 依赖上层 authMiddleware 已经校验并挂载 userId
+  const authorId = req.userId;
+  if (!authorId) {
+    sendErr(res, "Unauthorized", 401);
+    return;
   }
 
   try {

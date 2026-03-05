@@ -1,18 +1,11 @@
 import type { WebSocket } from "ws";
-import { getUserIdByToken } from "../middleware/auth";
 import { getMessageStore } from "../messageStore";
 import { gameLogger } from "../../util/logger";
+import { loadUserIdByToken } from "../../auth/RedisTokenStore";
 
 const userIdToSockets = new Map<string, Set<WebSocket>>();
 
-export function attachChatWs(ws: WebSocket, token: string | undefined): string | null {
-  if (!token) {
-    return null;
-  }
-  const userId = getUserIdByToken(token);
-  if (!userId) {
-    return null;
-  }
+export function attachChatWs(ws: WebSocket, userId: string): void {
   let set = userIdToSockets.get(userId);
   if (!set) {
     set = new Set();
@@ -23,7 +16,6 @@ export function attachChatWs(ws: WebSocket, token: string | undefined): string |
     set!.delete(ws);
     if (set!.size === 0) userIdToSockets.delete(userId);
   });
-  return userId;
 }
 
 export function sendToUser(userId: string, payload: object): void {
@@ -54,20 +46,31 @@ export function handleChatMessage(
 }
 
 export function setupChatWs(ws: WebSocket, token: string | undefined): void {
-  const userId = attachChatWs(ws, token);
-  if (!userId) {
-    ws.close(4001, "Invalid token");
-    return;
-  }
-
-  ws.on("message", (raw: Buffer) => {
-    try {
-      const body = JSON.parse(raw.toString()) as { type?: string; data?: unknown };
-      if (body.type === "message") {
-        handleChatMessage(userId, body as { type: string; data?: { userId?: string; content?: string } });
-      }
-    } catch (e) {
-      gameLogger.warn("chat ws message parse error", e);
+  (async () => {
+    if (!token) {
+      ws.close(4001, "Invalid token");
+      return;
     }
+    const userId = await loadUserIdByToken(token);
+    if (!userId) {
+      ws.close(4001, "Invalid token");
+      return;
+    }
+
+    attachChatWs(ws, userId);
+
+    ws.on("message", (raw: Buffer) => {
+      try {
+        const body = JSON.parse(raw.toString()) as { type?: string; data?: unknown };
+        if (body.type === "message") {
+          handleChatMessage(userId, body as { type: string; data?: { userId?: string; content?: string } });
+        }
+      } catch (e) {
+        gameLogger.warn("chat ws message parse error", e);
+      }
+    });
+  })().catch((e) => {
+    gameLogger.error("chat ws setup error", e);
+    ws.close(1011, "Internal error");
   });
 }
