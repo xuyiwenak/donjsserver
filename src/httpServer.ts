@@ -9,13 +9,30 @@ import type { ServerGlobals } from "./common/ServerGlobal";
 
 export let httpGameServer: HttpServer<ServiceType_Public> | undefined;
 
+/** 与 TSRPC HttpServer 一致的共享配置，供 miniapp 等复用（logger、CORS） */
+export const sharedHttpOptions = {
+  logger: gameLogger,
+  cors: "*" as const,
+  corsMaxAge: 3600,
+};
+
+/** 根据 ServerGlobals 计算小程序 API 端口（与主 HTTP 端口区分，默认 httpPort+1） */
+export function getMiniappPort(options: ServerGlobals): number {
+  if (options.miniappApiPort !== undefined) {
+    return options.miniappApiPort;
+  }
+  return options.httpPort ? options.httpPort + 1 : 40002;
+}
+
 export async function initHttpServer(options: ServerGlobals) {
   httpGameServer = new HttpServer<ServiceType_Public>(serviceProto_Public, {
     port: options.httpPort!,
-    logger: gameLogger,
+    logger: sharedHttpOptions.logger,
     json: true,
     logReqBody: true,
     logResBody: true,
+    cors: sharedHttpOptions.cors,
+    corsMaxAge: sharedHttpOptions.corsMaxAge,
   });
 
   await httpGameServer.autoImplementApi(

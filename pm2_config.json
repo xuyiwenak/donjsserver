@@ -13,7 +13,8 @@
         "environment": "development",
         "group": "1",
         "port": 41001,
-        "httpPort": 41000
+        "httpPort": 41000,
+        "miniappApiPort": 41003
       }, 
       "node_args": "--inspect=41002",
       "cwd": "./dist"

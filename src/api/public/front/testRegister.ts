@@ -2,12 +2,12 @@ import { WsClient } from 'tsrpc';
 import { serviceProto, ServiceType } from '../../../shared/public/instance/front_protocols/serviceProto';
 
 async function main() {
-    const client = new WsClient<ServiceType>(
-        serviceProto,
-        {
-          server: 'ws://127.0.0.1:41001',  // 换成你实际的前端服 ws 地址
-        }
-      );
+  const client = new WsClient<ServiceType>(
+    serviceProto,
+    {
+      server: 'ws://127.0.0.1:41001',  // 换成你实际的前端服 ws 地址
+    }
+  );
 
   // 连接（可选，callApi 会自动连，但单测里显式连更清晰）
   const connRet = await client.connect();

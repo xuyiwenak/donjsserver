@@ -19,10 +19,12 @@ import { PlayerComponent } from "./component/PlayerComponent";
 
 import { gameLogger, gameLogger as logger } from "./util/logger";
 import { stopFrontServer } from "./util/tool";
-import { initHttpServer, startHttpServer } from "./httpServer";
+import { getMiniappPort, initHttpServer, startHttpServer } from "./httpServer";
+import { startMiniappServer } from "./miniapp/server";
 
 // Entry function
 async function main() {
+  const httpPort = Number(process.env.httpPort);
   const args: ServerGlobals = {
     id: process.env.id!,
     internalIP: process.env.internalIP,
@@ -33,9 +35,14 @@ async function main() {
     environment: process.env.environment!,
     connectionTickTimeout: Number(process.env.connectionTickTimeout),
     port: Number(process.env.port),
-    httpPort: Number(process.env.httpPort),
+    httpPort,
+    miniappApiPort:
+      process.env.miniappApiPort !== undefined
+        ? Number(process.env.miniappApiPort)
+        : undefined,
     serverProvide: "",
   };
+  args.miniappApiPort = getMiniappPort(args);
   logger.debug("ServerGlobals----->", args);
   //-------------------------组件相关begin-----------------------------------------
   const globalVarComp: GlobalVarComponent = new GlobalVarComponent();
@@ -69,6 +76,9 @@ async function main() {
   // 启动 HTTP API Server（基于 ServiceType）
   await initHttpServer(args);
   await startHttpServer();
+
+  // 小程序 REST + WebSocket 服务（端口逻辑与 httpServer 共享）
+  await startMiniappServer(args.miniappApiPort);
 
   swaggui();
   await websocketGameServer.init(args);

@@ -17,4 +17,5 @@ export type ServerGlobals = {
   connectionTickTimeout: number;
   port?: number; //长连接端口
   httpPort?: number; //rpc端口
+  miniappApiPort?: number; // 小程序 REST + WebSocket 端口
 };
